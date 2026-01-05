@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Reina (</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            overflow-x: hidden;
+            background: #000;
+            color: white;
+        }
+
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Space Background */
+        #space-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        /* Canvas layers */
+        #space-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            transform-origin: center center;
+        }
+
+        #space-canvas.zoom-out {
+            animation: zoomOutEffect 2s ease-in-out forwards;
+            animation-delay: 18s;
+        }
+
+        #earth-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            transform-origin: center center;
+        }
+
+        #earth-canvas.zoom-out {
+            animation: zoomOutEffect 2s ease-in-out forwards;
+            animation-delay: 18s;
+        }
+
+        /* Opening Animation */
+        #opening {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            pointer-events: none;
+            perspective: 1000px;
+        }
+
+        #opening.fade-out {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 3s ease;
+        }
+
+        .greeting {
+            font-size: clamp(2.5em, 8vw, 5em);
+            font-weight: bold;
+            opacity: 0;
+            position: relative;
+            animation: floatIn 2s ease-out forwards, gentleFloat 6s ease-in-out infinite, fadeOut 2s ease-out forwards;
+            animation-delay: 2s, 4s, 10.5s;
+            padding: 0 20px;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes floatIn {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) translateZ(-100px) scale(0.8);
+                filter: blur(8px);
+            }
+            40% {
+                opacity: 0.6;
+                filter: blur(2px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) translateZ(0) scale(1);
+                filter: blur(0);
+                animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+        }
+
+        @keyframes floatInFromLower {
+            0% {
+                opacity: 0;
+                transform: translateY(150px) translateZ(-100px) scale(0.8);
+                filter: blur(8px);
+            }
+            40% {
+                opacity: 0.6;
+                filter: blur(2px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) translateZ(0) scale(1);
+                filter: blur(0);
+                animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeDownOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+        }
+
+        .crazy-text {
+            font-size: clamp(1.2em, 4vw, 2.5em);
+            margin-top: 30px;
+            opacity: 0;
+            animation: floatIn 2s ease-out forwards, gentleFloat 7s ease-in-out infinite, fadeOut 2s ease-out forwards;
+            animation-delay: 4.5s, 6.5s, 10.5s;
+            padding: 0 20px;
+            text-align: center;
+            transform-style: preserve-3d;
+        }
+
+        .earth-text {
+            font-size: clamp(1.5em, 5vw, 3em);
+            opacity: 0;
+            animation: floatInFromLower 2s ease-out forwards, gentleFloat 6s ease-in-out infinite, fadeDownOut 2s ease-out forwards;
+            animation-delay: 11s, 13s, 15s;
+            padding: 0 20px;
+            text-align: center;
+            font-style: italic;
+            position: fixed;
+            top: 28%;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: 90%;
+            max-width: 800px;
+            z-index: 8;
+        }
+
+        .final-text {
+            font-size: clamp(1.5em, 5vw, 3em);
+            opacity: 0;
+            animation: floatDownFromCenter 2.5s ease-out forwards, orbitalFloat 8s ease-in-out infinite, fadeOut 1s ease-out forwards;
+            animation-delay: 13.5s, 16s, 18s;
+            padding: 0 20px;
+            text-align: center;
+            font-style: italic;
+            position: fixed;
+            top: 50%;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: 90%;
+            max-width: 800px;
+            z-index: 8;
+        }
+
+        .stars-text {
+            font-size: clamp(1.5em, 5vw, 3em);
+            opacity: 0;
+            animation: zoomInFocus 3s ease-out forwards, orbitalFloat 8s ease-in-out infinite;
+            animation-delay: 19s, 22s;
+            padding: 0 20px;
+            text-align: center;
+            font-style: italic;
+            position: fixed;
+            top: 50%;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: 90%;
+            max-width: 800px;
+            z-index: 12;
+        }
+
+        @keyframes floatDownFromCenter {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.9);
+                filter: blur(8px);
+            }
+            40% {
+                opacity: 0.5;
+                filter: blur(3px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(200px) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% {
+                transform: translateY(0) rotateZ(0deg) translateX(0);
+            }
+            25% {
+                transform: translateY(-8px) rotateZ(0.5deg) translateX(3px);
+            }
+            50% {
+                transform: translateY(-4px) rotateZ(0deg) translateX(5px);
+            }
+            75% {
+                transform: translateY(-10px) rotateZ(-0.5deg) translateX(2px);
+            }
+        }
+
+        @keyframes orbitalFloat {
+            0%, 100% {
+                transform: translateY(200px) rotateX(0deg) rotateY(0deg);
+            }
+            25% {
+                transform: translateY(188px) rotateX(2deg) rotateY(-1deg);
+            }
+            50% {
+                transform: translateY(194px) rotateX(-1deg) rotateY(1deg);
+            }
+            75% {
+                transform: translateY(185px) rotateX(1deg) rotateY(-2deg);
+            }
+        }
+
+        @keyframes zoomOutEffect {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes zoomInFocus {
+            0% {
+                opacity: 0;
+                transform: scale(3) rotateZ(10deg);
+                filter: blur(20px);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.5) rotateZ(5deg);
+                filter: blur(10px);
+            }
+            80% {
+                opacity: 0.8;
+                filter: blur(3px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateZ(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInGlow {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+                text-shadow: 0 0 0px rgba(255, 255, 255, 0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                text-shadow: 0 0 30px rgba(255, 200, 255, 0.8);
+            }
+        }
+
+        .word {
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Intro Section */
+        #intro {
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        #intro.visible {
+            opacity: 1;
+        }
+
+        #intro h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073; }
+            to { text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6; }
+        }
+
+        #intro p {
+            font-size: 1.5em;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff4da6, #a64dff);
+            border: none;
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 77, 166, 0.4);
+            font-family: 'Georgia', serif;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 77, 166, 0.6);
+        }
+
+        /* Quiz Section */
+        #quiz {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #quiz.visible {
+            opacity: 1;
+        }
+
+        .quiz-question {
+            margin: 30px 0;
+        }
+
+        .quiz-question h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quiz-option {
+            padding: 15px 30px;
+            font-size: 1.2em;
+        }
+
+        /* Gifts Section */
+        #gifts {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #gifts.visible {
+            opacity: 1;
+        }
+
+        .gift-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+            width: 100%;
+        }
+
+        .gift-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 77, 166, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gift-item:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 77, 166, 0.8);
+            box-shadow: 0 10px 30px rgba(255, 77, 166, 0.4);
+        }
+
+        .gift-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .gift-item label {
+            font-size: 1.3em;
+            cursor: pointer;
+        }
+
+        /* Games Section */
+        #games {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #games.visible {
+            opacity: 1;
+        }
+
+        .game {
+            margin: 40px 0;
+        }
+
+        #memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+            margin: 30px auto;
+        }
+
+        .memory-card {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff4da6, #a64dff);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            transition: all 0.3s ease;
+        }
+
+        .memory-card.flipped {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .memory-card.matched {
+            background: rgba(77, 255, 77, 0.3);
+            pointer-events: none;
+        }
+
+        /* Love Letter */
+        #love-letter {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #love-letter.visible {
+            opacity: 1;
+        }
+
+        #love-letter .content {
+            max-width: 700px;
+            line-height: 2;
+            font-size: 1.3em;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 50px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 77, 166, 0.3);
+        }
+
+        #love-letter h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        /* Locked Section */
+        #locked-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #locked-section.visible {
+            opacity: 1;
+        }
+
+        #countdown {
+            font-size: 3em;
+            margin: 30px 0;
+            color: #ff4da6;
+        }
+
+        .lock-icon {
+            font-size: 5em;
+            margin: 20px 0;
+        }
+
+        /* Proposal */
+        #proposal {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #proposal.visible {
+            opacity: 1;
+        }
+
+        #proposal h2 {
+            font-size: 3.5em;
+            margin-bottom: 50px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .button-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        #yes-btn, #no-btn {
+            transition: all 0.3s ease;
+        }
+
+        #yes-btn {
+            font-size: 1.5em;
+            padding: 25px 60px;
+        }
+
+        #no-btn {
+            font-size: 1.2em;
+            padding: 20px 50px;
+            background: linear-gradient(45deg, #666, #999);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .reveal-message {
+            font-size: 2em;
+            margin-top: 30px;
+            animation: fadeInScale 1s ease forwards;
+        }
+
+        /* Mobile Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .section {
+                padding: 20px;
+            }
+
+            #intro h1 {
+                font-size: 2em;
+            }
+
+            #intro p {
+                font-size: 1.2em;
+            }
+
+            button {
+                padding: 15px 30px;
+                font-size: 1.1em;
+            }
+
+            .quiz-question h3 {
+                font-size: 1.3em;
+            }
+
+            .quiz-option {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+
+            .gift-list {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .gift-item {
+                padding: 20px;
+            }
+
+            .gift-item label {
+                font-size: 1.1em;
+            }
+
+            #memory-game {
+                grid-template-columns: repeat(4, 70px);
+                gap: 8px;
+            }
+
+            .memory-card {
+                width: 70px;
+                height: 70px;
+                font-size: 1.5em;
+            }
+
+            #love-letter .content {
+                padding: 30px 25px;
+                font-size: 1.1em;
+            }
+
+            #love-letter h2 {
+                font-size: 1.8em;
+            }
+
+            #countdown {
+                font-size: 2em;
+            }
+
+            .lock-icon {
+                font-size: 3.5em;
+            }
+
+            #proposal h2 {
+                font-size: 2.5em;
+                padding: 0 20px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            #yes-btn {
+                font-size: 1.3em;
+                padding: 20px 50px;
+            }
+
+            #no-btn {
+                font-size: 1.1em;
+                padding: 15px 40px;
+            }
+
+            .reveal-message {
+                font-size: 1.5em;
+                padding: 0 20px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .greeting {
+                font-size: clamp(1.8em, 10vw, 3em);
+            }
+
+            .crazy-text {
+                font-size: clamp(1em, 5vw, 1.8em);
+            }
+
+            .earth-text {
+                font-size: clamp(1.2em, 6vw, 2.2em);
+            }
+
+            .final-text {
+                font-size: clamp(1.2em, 6vw, 2.2em);
+            }
+
+            #memory-game {
+                grid-template-columns: repeat(4, 60px);
+                gap: 6px;
+            }
+
+            .memory-card {
+                width: 60px;
+                height: 60px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Space Background Canvas (stars and nebula) -->
+    <canvas id="space-canvas"></canvas>
+
+    <!-- Opening Animation -->
+    <div id="opening">
+        <h1 class="greeting">Hey Reina</h1>
+        <p class="crazy-text">wanna know something crazy?</p>
+    </div>
+
+    <!-- Third text - floats in behind Earth -->
+    <p class="earth-text">out of all the people on earth...</p>
+
+    <!-- Final text - revealed below Earth -->
+    <p class="final-text">you're the only one for me &lt;3</p>
+
+    <!-- Stars text - revealed after zoom -->
+    <p class="stars-text">and out of all the stars in the night sky...</p>
+
+    <!-- Earth Canvas (on top) -->
+    <canvas id="earth-canvas"></canvas>
+
+    <!-- Main Content Sections (temporarily hidden for animation focus) -->
+    <section id="intro" class="section" style="display: none;">
+        <div class="content">
+            <h1>For Reina</h1>
+            <p>I know you don't like gifts because you feel like you have to give back. Just know that the gift of your presence is the best one you could ever give. You're the kindest person I've met and if anyone deserves a gift it's you.</p>
+            <button onclick="startQuiz()">Continue</button>
+        </div>
+    </section>
+
+    <section id="quiz" class="section">
+        <div class="content">
+            <h2>Quick Quiz Time! <</h2>
+            <div id="quiz-questions"></div>
+            <button id="quiz-submit" onclick="submitQuiz()" style="display: none;">Submit Answers</button>
+        </div>
+    </section>
+
+    <section id="gifts" class="section">
+        <div class="content">
+            <h2>Choose Your Gift <�</h2>
+            <p style="font-size: 1.3em; margin: 20px 0;">Pick the one you want most...</p>
+            <div class="gift-list" id="gift-list"></div>
+            <button onclick="revealGifts()">Confirm Selection</button>
+            <div id="gift-reveal" class="hidden">
+                <h3 style="font-size: 2em; margin-top: 40px;">Just kidding... you get ALL of them! =�</h3>
+            </div>
+            <button onclick="showGames()" class="hidden" id="next-to-games" style="margin-top: 30px;">Next</button>
+        </div>
+    </section>
+
+    <section id="games" class="section">
+        <div class="content">
+            <h2>Let's Play a Game! <�</h2>
+            <div class="game">
+                <h3>Memory Match - Find the Hearts</h3>
+                <div id="memory-game"></div>
+                <p id="game-status" style="font-size: 1.3em; margin-top: 20px;"></p>
+            </div>
+            <button onclick="showLoveLetter()" class="hidden" id="next-to-letter">Continue</button>
+        </div>
+    </section>
+
+    <section id="love-letter" class="section">
+        <div class="content">
+            <h2>A Letter for You =�</h2>
+            <p style="margin: 30px 0;">
+                Dear Reina,<br><br>
+                Every moment with you feels like magic. Your smile lights up my world brighter than any star in the night sky. Your kindness, your laughter, your presence - they all make my life infinitely better.<br><br>
+                You see beauty in everything, and you've helped me see the world through new eyes. When I'm with you, everything feels right. Every conversation, every laugh, every quiet moment - they're all treasures I hold close to my heart.<br><br>
+                You deserve all the happiness in the world, and I want to be part of that happiness. Thank you for being exactly who you are - brilliant, caring, funny, and absolutely wonderful.<br><br>
+                With all my love,<br>
+                [Your Name]
+            </p>
+            <button onclick="showLockedSection()">What's Next?</button>
+        </div>
+    </section>
+
+    <section id="locked-section" class="section">
+        <div class="content">
+            <div class="lock-icon">=</div>
+            <h2>Something Special Awaits...</h2>
+            <p style="font-size: 1.5em;">This unlocks in:</p>
+            <div id="countdown"></div>
+            <p style="font-size: 1.2em; margin-top: 20px;">Check back in 30 days for a very important question...</p>
+        </div>
+    </section>
+
+    <section id="proposal" class="section">
+        <div class="content">
+            <h2>Will you be my girlfriend?</h2>
+            <div class="button-container">
+                <button id="yes-btn" onclick="handleYes()">Yes</button>
+                <button id="no-btn" onclick="handleNo()">Yes</button>
+            </div>
+            <div id="success-message" class="reveal-message hidden">
+                <�=� You've made me the happiest person alive! =�<�
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Space Background Animation - Two canvas layers
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const earthCanvas = document.getElementById('earth-canvas');
+        const earthCtx = earthCanvas.getContext('2d', { alpha: true });
+        earthCanvas.width = window.innerWidth;
+        earthCanvas.height = window.innerHeight;
+
+        // Make sure canvas is transparent initially
+        earthCtx.clearRect(0, 0, earthCanvas.width, earthCanvas.height);
+
+        console.log('Canvas initialized:', canvas.width, 'x', canvas.height);
+        console.log('Space canvas element:', canvas);
+        console.log('Earth canvas element:', earthCanvas);
+
+        let cameraX = 0;
+        let cameraY = 0;
+        let cameraRotation = 0;
+        let time = 0;
+        let zoomLevel = 25; // Fixed zoom level showing top half of Earth
+        let zoomingOut = false;
+        let starsOpacity = 0; // Start with invisible stars
+        let earthAnimationStarted = false;
+        let earthAnimationTime = 0;
+        let secondEarthRiseStarted = false;
+        let secondEarthRiseTime = 0;
+
+        // Earth object - starts off screen below (using viewport percentages)
+        const earth = {
+            x: 0,
+            y: canvas.height * 30, // Start extremely far below screen (30x viewport height)
+            z: 500, // Distance from camera
+            radius: 6371, // Earth's actual radius in km (scaled)
+            rotation: 0,
+            image: null,
+            imageLoaded: false,
+            targetY: canvas.height * 5 - 50, // First stop position (slightly higher)
+            visible: false,
+            startY: canvas.height * 30,
+            firstStopY: canvas.height * 5 - 50,
+            finalY: canvas.height * 0.1 // Final higher position to cover the third text and reveal bottom text
+        };
+
+        // Load NASA Blue Marble Earth texture
+        const earthImg = new Image();
+        earthImg.crossOrigin = "anonymous";
+        earthImg.src = 'https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg';
+
+        earthImg.onload = function() {
+            earth.image = earthImg;
+            earth.imageLoaded = true;
+            console.log('NASA Earth texture loaded successfully');
+        };
+
+        earthImg.onerror = function() {
+            console.log('Failed to load NASA Earth texture, using fallback');
+            earth.imageLoaded = false;
+        };
+
+        // Realistic star colors based on temperature
+        const starColors = [
+            'rgba(155, 176, 255,', // Blue (hot)
+            'rgba(170, 191, 255,', // Blue-white
+            'rgba(255, 244, 234,', // White
+            'rgba(255, 244, 214,', // Yellow-white
+            'rgba(255, 210, 161,', // Yellow
+            'rgba(255, 204, 111,', // Orange
+            'rgba(255, 111, 111,'  // Red (cool)
+        ];
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 0.8 + 0.2; // Smaller, more subtle
+                this.brightness = 0.3 + Math.random() * 0.4; // Dimmer
+                this.twinklePhase = Math.random() * Math.PI * 2;
+                this.twinkleSpeed = 0.005 + Math.random() * 0.01; // Slower twinkle
+                this.opacity = 0; // Start invisible for fade-in
+            }
+
+            draw() {
+                // Very subtle twinkling
+                this.twinklePhase += this.twinkleSpeed;
+                const twinkle = 0.85 + Math.sin(this.twinklePhase) * 0.15;
+                const alpha = this.brightness * twinkle * this.opacity;
+
+                // Simple white point of light
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.fill();
+            }
+        }
+
+        // Shooting star class - much rarer
+        class ShootingStar {
+            constructor() {
+                this.active = false;
+                this.cooldown = 0;
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height * 0.3; // Top third of screen
+                this.length = 80 + Math.random() * 50;
+                this.speed = 4 + Math.random() * 3;
+                this.angle = Math.PI / 3 + (Math.random() - 0.5) * 0.3; // More consistent angle
+                this.opacity = 0;
+                this.life = 0;
+                this.maxLife = 40 + Math.random() * 30;
+                this.active = false;
+                this.cooldown = 300 + Math.random() * 400; // 5-13 seconds between shooting stars
+            }
+
+            update() {
+                if (!this.active) {
+                    this.cooldown--;
+                    if (this.cooldown <= 0) {
+                        this.active = true;
+                        this.life = 0;
+                    }
+                    return;
+                }
+
+                this.life++;
+
+                // Quick fade in and out
+                if (this.life < 8) {
+                    this.opacity = this.life / 8;
+                } else if (this.life > this.maxLife - 8) {
+                    this.opacity = (this.maxLife - this.life) / 8;
+                } else {
+                    this.opacity = 0.8;
+                }
+
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+
+                // Reset if off screen or life ended
+                if (this.life >= this.maxLife || this.x > canvas.width + 100 || this.y > canvas.height + 100 || this.x < -100) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                if (!this.active || this.opacity <= 0) return;
+
+                ctx.save();
+
+                // Draw bright head
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+
+                // Draw gradient trail
+                const gradient = ctx.createLinearGradient(
+                    this.x, this.y,
+                    this.x - Math.cos(this.angle) * this.length,
+                    this.y - Math.sin(this.angle) * this.length
+                );
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity * 0.9})`);
+                gradient.addColorStop(0.3, `rgba(200, 220, 255, ${this.opacity * 0.5})`);
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 1.5;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(
+                    this.x - Math.cos(this.angle) * this.length,
+                    this.y - Math.sin(this.angle) * this.length
+                );
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        const stars = Array.from({ length: 2000 }, () => new Star());
+        const shootingStars = [new ShootingStar(), new ShootingStar()];
+        console.log('Created', stars.length, 'stars and', shootingStars.length, 'shooting stars');
+
+        // Nebula particles for depth
+        class NebulaParticle {
+            constructor() {
+                this.x = (Math.random() - 0.5) * canvas.width * 15;
+                this.y = (Math.random() - 0.5) * canvas.height * 15;
+                this.z = Math.random() * canvas.width * 10 + 2000;
+                this.size = Math.random() * 80 + 20;
+                this.hue = Math.random() * 60 + 200; // Blue to purple range
+            }
+
+            draw() {
+                const adjustedZ = this.z * zoomLevel;
+                if (adjustedZ <= 0) return;
+
+                const perspective = canvas.width / adjustedZ;
+                const x = this.x * perspective;
+                const y = this.y * perspective;
+                const s = this.size * perspective;
+
+                const centerX = canvas.width / 2 + x;
+                const centerY = canvas.height / 2 + y;
+
+                if (centerX < -500 || centerX > canvas.width + 500 ||
+                    centerY < -500 || centerY > canvas.height + 500) {
+                    return;
+                }
+
+                const alpha = 0.03 * (1 - adjustedZ / (canvas.width * 10));
+                const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, s);
+                gradient.addColorStop(0, `hsla(${this.hue}, 70%, 60%, ${alpha})`);
+                gradient.addColorStop(1, `hsla(${this.hue}, 70%, 60%, 0)`);
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(centerX - s, centerY - s, s * 2, s * 2);
+            }
+        }
+
+        const nebula = Array.from({ length: 50 }, () => new NebulaParticle());
+
+        function drawEarth() {
+            // Clear earth canvas
+            earthCtx.clearRect(0, 0, earthCanvas.width, earthCanvas.height);
+
+            if (!earth.visible) return;
+
+            const adjustedZ = earth.z * zoomLevel;
+
+            // Don't draw if astronomically far away
+            if (adjustedZ > 100000) return;
+
+            const perspective = canvas.width / adjustedZ;
+            const radius = earth.radius * perspective;
+
+            const centerX = canvas.width / 2 + earth.x * perspective;
+            const centerY = canvas.height / 2 + earth.y * perspective;
+
+            // If Earth is very small, draw it as a simple dot
+            if (radius < 2) {
+                const dotSize = Math.max(radius, 0.5);
+
+                // Draw Earth as a small blue dot with glow
+                const glowGradient = earthCtx.createRadialGradient(centerX, centerY, 0, centerX, centerY, dotSize * 4);
+                glowGradient.addColorStop(0, 'rgba(100, 180, 255, 0.8)');
+                glowGradient.addColorStop(0.5, 'rgba(100, 180, 255, 0.3)');
+                glowGradient.addColorStop(1, 'rgba(100, 180, 255, 0)');
+
+                earthCtx.fillStyle = glowGradient;
+                earthCtx.beginPath();
+                earthCtx.arc(centerX, centerY, dotSize * 4, 0, Math.PI * 2);
+                earthCtx.fill();
+
+                // Draw bright core
+                earthCtx.fillStyle = 'rgba(150, 220, 255, 1)';
+                earthCtx.beginPath();
+                earthCtx.arc(centerX, centerY, dotSize, 0, Math.PI * 2);
+                earthCtx.fill();
+
+                return;
+            }
+
+            earth.rotation += 0.0003; // Slow rotation
+
+            // Save context
+            earthCtx.save();
+
+            // Create clipping circle for Earth
+            earthCtx.beginPath();
+            earthCtx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            earthCtx.clip();
+
+            // Only draw Earth if the image is loaded
+            if (earth.imageLoaded && earth.image) {
+                // Draw realistic Earth texture - just one centered image
+                earthCtx.drawImage(
+                    earth.image,
+                    centerX - radius,
+                    centerY - radius,
+                    radius * 2,
+                    radius * 2
+                );
+
+                // Add subtle shading for 3D effect
+                const shadingGradient = earthCtx.createRadialGradient(
+                    centerX - radius * 0.2, centerY - radius * 0.2, radius * 0.1,
+                    centerX, centerY, radius * 1.4
+                );
+                shadingGradient.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+                shadingGradient.addColorStop(0.6, 'rgba(0, 0, 0, 0)');
+                shadingGradient.addColorStop(1, 'rgba(0, 0, 0, 0.6)');
+
+                earthCtx.fillStyle = shadingGradient;
+                earthCtx.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+            } else {
+                // Don't draw anything while image loads - just return
+                earthCtx.restore();
+                return;
+            }
+
+            // Restore context (remove clip)
+            earthCtx.restore();
+
+            // Add feathered edge to eliminate black border
+            // Draw a soft fade-out gradient at the edge
+            earthCtx.save();
+            earthCtx.globalCompositeOperation = 'destination-out';
+
+            const featherGradient = earthCtx.createRadialGradient(
+                centerX, centerY, radius * 0.88,  // Start fade at 88% of radius
+                centerX, centerY, radius * 1.0    // Complete fade at edge
+            );
+            featherGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            featherGradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
+
+            earthCtx.fillStyle = featherGradient;
+            earthCtx.beginPath();
+            earthCtx.arc(centerX, centerY, radius * 1.12, 0, Math.PI * 2);
+            earthCtx.fill();
+
+            earthCtx.restore();
+        }
+
+        function animateSpace() {
+            time += 0.016; // ~60fps
+
+            // Phase 1: Fade in stars (0-3 seconds)
+            if (time < 3) {
+                const fadeProgress = time / 3;
+                starsOpacity = fadeProgress;
+                // Fade in individual stars with wave pattern
+                stars.forEach((star, index) => {
+                    const delay = (star.x / canvas.width) * 0.5; // Wave from left to right
+                    const adjustedProgress = Math.max(0, (fadeProgress - delay) / (1 - delay * 0.5));
+                    const easeProgress = 1 - Math.pow(1 - adjustedProgress, 3); // Ease out cubic
+                    star.opacity = Math.min(1, easeProgress);
+                });
+            } else {
+                starsOpacity = 1;
+                stars.forEach(star => {
+                    star.opacity = 1;
+                });
+            }
+
+            // Phase 2: Earth animation starts at 7.5 seconds (give text more time)
+            if (time >= 7.5 && !earthAnimationStarted) {
+                earthAnimationStarted = true;
+                earth.visible = true;
+                console.log('Earth animation started!');
+            }
+
+            // Animate Earth rising from below (first rise)
+            if (earthAnimationStarted && !secondEarthRiseStarted) {
+                earthAnimationTime += 0.016;
+                const earthDuration = 3; // 3 seconds to rise
+
+                if (earthAnimationTime < earthDuration) {
+                    const progress = earthAnimationTime / earthDuration;
+                    // Ease out cubic for smooth deceleration
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    earth.y = earth.startY - (earth.startY - earth.firstStopY) * eased;
+                } else {
+                    // Hold first stop position
+                    earth.y = earth.firstStopY;
+                }
+            }
+
+            // Second Earth rise at 13.5 seconds to cover the third text
+            if (time >= 13.5 && !secondEarthRiseStarted && earthAnimationStarted) {
+                secondEarthRiseStarted = true;
+                secondEarthRiseTime = 0;
+                console.log('Second Earth rise started!');
+            }
+
+            if (secondEarthRiseStarted) {
+                secondEarthRiseTime += 0.016;
+                const secondRiseDuration = 2.5; // 2.5 seconds for second rise
+
+                if (secondEarthRiseTime < secondRiseDuration) {
+                    const progress = secondEarthRiseTime / secondRiseDuration;
+                    // Ease in-out for smooth start and stop
+                    const eased = progress < 0.5
+                        ? 2 * progress * progress
+                        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                    earth.y = earth.firstStopY - (earth.firstStopY - earth.finalY) * eased;
+                } else {
+                    // Hold final position
+                    earth.y = earth.finalY;
+                }
+            }
+
+            // Clear space canvas with pure black
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw stars with opacity (on space canvas behind everything)
+            ctx.globalAlpha = starsOpacity;
+            stars.forEach(star => star.draw());
+
+            // Update and draw shooting stars
+            shootingStars.forEach(shootingStar => {
+                shootingStar.update();
+                shootingStar.draw();
+            });
+
+            ctx.globalAlpha = 1;
+
+            // Draw Earth on separate canvas (on top)
+            drawEarth();
+
+            requestAnimationFrame(animateSpace);
+        }
+
+        animateSpace();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            earthCanvas.width = window.innerWidth;
+            earthCanvas.height = window.innerHeight;
+
+            // Regenerate stars for new canvas size
+            stars.length = 0;
+            for (let i = 0; i < 2000; i++) {
+                stars.push(new Star());
+            }
+
+            // Update Earth positions based on new viewport size
+            earth.startY = canvas.height * 30;
+            earth.firstStopY = canvas.height * 5 - 50;
+            earth.finalY = canvas.height * 0.1;
+
+            // If animation hasn't started, update starting position
+            if (!earthAnimationStarted) {
+                earth.y = earth.startY;
+                earth.targetY = earth.firstStopY;
+            } else if (secondEarthRiseStarted && secondEarthRiseTime >= 2.5) {
+                // If second animation is complete, update final position
+                earth.y = earth.finalY;
+                earth.targetY = earth.finalY;
+            } else if (earthAnimationTime >= 3 && !secondEarthRiseStarted) {
+                // If first animation is complete but second hasn't started
+                earth.y = earth.firstStopY;
+                earth.targetY = earth.firstStopY;
+            }
+        });
+
+        // Zoom out effect at 18 seconds
+        setTimeout(() => {
+            document.getElementById('space-canvas').classList.add('zoom-out');
+            document.getElementById('earth-canvas').classList.add('zoom-out');
+        }, 18000);
+
+        // Opening Animation Sequence - delayed to after zoom completes
+        setTimeout(() => {
+            document.getElementById('opening').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('opening').style.display = 'none';
+                document.getElementById('intro').classList.add('visible');
+            }, 3000);
+        }, 22000);
+
+        // Quiz Data
+        const quizQuestions = [
+            {
+                question: "What's the best way to spend a Saturday?",
+                options: ["Sleep until 3pm", "Conquer the world", "Eat snacks in bed", "Actually leave the house (scary)"]
+            },
+            {
+                question: "If you were a vegetable, which one?",
+                options: ["Potato (lazy and versatile)", "Cucumber (cool as a...)", "Broccoli (tiny trees!)", "Carrot (good vision)"]
+            },
+            {
+                question: "Your superpower would be:",
+                options: ["Teleportation (no more walking)", "Reading minds (dangerous)", "Infinite snacks", "Never need sleep"]
+            },
+            {
+                question: "Perfect date activity:",
+                options: ["Netflix and actually chill", "Fancy dinner (get dressed up?!)", "Adventure time!", "Gaming marathon"]
+            }
+        ];
+
+        // Gifts Data
+        const gifts = [
+            "<9 Flowers",
+            "<k Chocolate",
+            "=� Your favorite book",
+            "<� Game you've wanted",
+            "=� Jewelry",
+            ">� Cute plushie",
+            "<� Art supplies",
+            " Coffee/Tea set",
+            "<� Concert tickets",
+            "( Surprise date"
+        ];
+
+        function startQuiz() {
+            const intro = document.getElementById('intro');
+            const quiz = document.getElementById('quiz');
+
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.display = 'none';
+                quiz.style.display = 'flex';
+                setTimeout(() => quiz.classList.add('visible'), 50);
+            }, 1500);
+
+            const quizContainer = document.getElementById('quiz-questions');
+            quizQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.innerHTML = `
+                    <h3>${q.question}</h3>
+                    <div class="quiz-options">
+                        ${q.options.map((opt, i) => `
+                            <button class="quiz-option" onclick="selectAnswer(${index}, ${i})">${opt}</button>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+
+            document.getElementById('quiz-submit').style.display = 'block';
+        }
+
+        let answers = {};
+        function selectAnswer(questionIndex, answerIndex) {
+            answers[questionIndex] = answerIndex;
+            const options = document.querySelectorAll(`#quiz-questions .quiz-question:nth-child(${questionIndex + 1}) button`);
+            options.forEach((btn, i) => {
+                btn.style.opacity = i === answerIndex ? '1' : '0.5';
+            });
+        }
+
+        function submitQuiz() {
+            if (Object.keys(answers).length < quizQuestions.length) {
+                alert("Please answer all questions! 😊");
+                return;
+            }
+
+            const quiz = document.getElementById('quiz');
+            const gifts = document.getElementById('gifts');
+
+            quiz.style.opacity = '0';
+            setTimeout(() => {
+                quiz.style.display = 'none';
+                gifts.style.display = 'flex';
+                setTimeout(() => gifts.classList.add('visible'), 50);
+            }, 1500);
+
+            setupGifts();
+        }
+
+        function setupGifts() {
+            const giftList = document.getElementById('gift-list');
+            gifts.forEach((gift, index) => {
+                const giftDiv = document.createElement('div');
+                giftDiv.className = 'gift-item';
+                giftDiv.innerHTML = `
+                    <input type="checkbox" id="gift${index}" name="gift${index}">
+                    <label for="gift${index}">${gift}</label>
+                `;
+                giftList.appendChild(giftDiv);
+            });
+        }
+
+        function revealGifts() {
+            document.getElementById('gift-reveal').classList.remove('hidden');
+            document.getElementById('next-to-games').classList.remove('hidden');
+        }
+
+        function showGames() {
+            const giftsSection = document.getElementById('gifts');
+            const gamesSection = document.getElementById('games');
+
+            giftsSection.style.opacity = '0';
+            setTimeout(() => {
+                giftsSection.style.display = 'none';
+                gamesSection.style.display = 'flex';
+                setTimeout(() => gamesSection.classList.add('visible'), 50);
+            }, 1500);
+
+            setupMemoryGame();
+        }
+
+        // Memory Game
+        const emojis = ['=�', '(', '<', '=�', '<8', '>�', '<:', '=�'];
+        let cards = [...emojis, ...emojis];
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        function setupMemoryGame() {
+            cards.sort(() => Math.random() - 0.5);
+            const gameBoard = document.getElementById('memory-game');
+
+            cards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.emoji = emoji;
+                card.dataset.index = index;
+                card.textContent = '?';
+                card.onclick = () => flipCard(card);
+                gameBoard.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (flippedCards.length === 2 || card.classList.contains('flipped')) return;
+
+            card.textContent = card.dataset.emoji;
+            card.classList.add('flipped');
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                setTimeout(checkMatch, 1000);
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+
+            if (card1.dataset.emoji === card2.dataset.emoji) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+
+                if (matchedPairs === emojis.length) {
+                    document.getElementById('game-status').textContent = '<� Amazing! You won!';
+                    document.getElementById('next-to-letter').classList.remove('hidden');
+                }
+            } else {
+                card1.textContent = '?';
+                card2.textContent = '?';
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+            }
+
+            flippedCards = [];
+        }
+
+        function showLoveLetter() {
+            const gamesSection = document.getElementById('games');
+            const letterSection = document.getElementById('love-letter');
+
+            gamesSection.style.opacity = '0';
+            setTimeout(() => {
+                gamesSection.style.display = 'none';
+                letterSection.style.display = 'flex';
+                setTimeout(() => letterSection.classList.add('visible'), 50);
+            }, 1500);
+        }
+
+        function showLockedSection() {
+            const letterSection = document.getElementById('love-letter');
+            const lockedSection = document.getElementById('locked-section');
+
+            letterSection.style.opacity = '0';
+            setTimeout(() => {
+                letterSection.style.display = 'none';
+                lockedSection.style.display = 'flex';
+                setTimeout(() => lockedSection.classList.add('visible'), 50);
+            }, 1500);
+
+            startCountdown();
+        }
+
+        // Countdown Timer (30 days)
+        const unlockDate = new Date();
+        unlockDate.setDate(unlockDate.getDate() + 30);
+
+        // For testing, uncomment this line to unlock immediately:
+        // unlockDate.setSeconds(unlockDate.getSeconds() + 5);
+
+        function startCountdown() {
+            const countdownEl = document.getElementById('countdown');
+
+            function updateCountdown() {
+                const now = new Date();
+                const diff = unlockDate - now;
+
+                if (diff <= 0) {
+                    showProposal();
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+
+        function showProposal() {
+            const lockedSection = document.getElementById('locked-section');
+            const proposalSection = document.getElementById('proposal');
+
+            lockedSection.style.opacity = '0';
+            setTimeout(() => {
+                lockedSection.style.display = 'none';
+                proposalSection.style.display = 'flex';
+                setTimeout(() => proposalSection.classList.add('visible'), 50);
+            }, 1500);
+        }
+
+        // Proposal Button Logic
+        let noClickCount = 0;
+        function handleNo() {
+            noClickCount++;
+            const noBtn = document.getElementById('no-btn');
+            const yesBtn = document.getElementById('yes-btn');
+
+            // Shrink no button
+            const newSize = Math.max(0.5, 1.2 - noClickCount * 0.2);
+            noBtn.style.fontSize = `${newSize}em`;
+            noBtn.style.padding = `${15 - noClickCount * 2}px ${40 - noClickCount * 5}px`;
+
+            // Grow yes button
+            const yesSize = 1.5 + noClickCount * 0.3;
+            yesBtn.style.fontSize = `${yesSize}em`;
+            yesBtn.style.padding = `${25 + noClickCount * 5}px ${60 + noClickCount * 10}px`;
+
+            // Change no button text
+            if (noClickCount > 3) {
+                noBtn.textContent = 'Still Yes';
+            }
+        }
+
+        function handleYes() {
+            document.querySelector('.button-container').style.display = 'none';
+            document.getElementById('success-message').classList.remove('hidden');
+
+            // Celebration effect
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createHeart();
+                }, i * 100);
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.textContent = '=�';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.top = window.innerHeight + 'px';
+            heart.style.fontSize = '2em';
+            heart.style.zIndex = '9999';
+            heart.style.pointerEvents = 'none';
+            document.body.appendChild(heart);
+
+            const duration = 3000 + Math.random() * 2000;
+            heart.animate([
+                { transform: 'translateY(0px) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(-${window.innerHeight + 100}px) rotate(360deg)`, opacity: 0 }
+            ], {
+                duration: duration,
+                easing: 'ease-out'
+            });
+
+            setTimeout(() => heart.remove(), duration);
+        }
+
+        // For testing: Uncomment to skip to proposal immediately
+        // setTimeout(showProposal, 8000);
+    </script>
+</body>
+</html>
