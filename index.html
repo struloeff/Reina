@@ -110,7 +110,7 @@
             opacity: 0;
             position: relative;
             animation: floatIn 2s ease-out forwards, gentleFloat 6s ease-in-out infinite, fadeOut 2s ease-out forwards;
-            animation-delay: 2s, 4s, 9.5s;
+            animation-delay: 2s, 4s, 7.5s;
             padding: 0 20px;
             transform-style: preserve-3d;
         }
@@ -176,7 +176,7 @@
             margin-top: 30px;
             opacity: 0;
             animation: floatIn 2s ease-out forwards, gentleFloat 7s ease-in-out infinite, fadeOut 2s ease-out forwards;
-            animation-delay: 4.5s, 6.5s, 9.5s;
+            animation-delay: 4.5s, 6.5s, 7.5s;
             padding: 0 20px;
             text-align: center;
             transform-style: preserve-3d;
@@ -186,7 +186,7 @@
             font-size: clamp(1.5em, 5vw, 3em);
             opacity: 0;
             animation: floatInFromLower 2s ease-out forwards, gentleFloat 6s ease-in-out infinite, fadeDownOut 3s ease-out forwards;
-            animation-delay: 9s, 11s, 15.5s;
+            animation-delay: 8s, 10s, 13.5s;
             animation-fill-mode: forwards, none, forwards;
             padding: 0 20px;
             text-align: center;
@@ -205,7 +205,7 @@
             font-size: clamp(1.5em, 5vw, 3em);
             opacity: 0;
             animation: floatDownFromCenter 2.5s ease-out forwards, orbitalFloat 8s ease-in-out infinite, fadeOut 1s ease-out forwards;
-            animation-delay: 13.5s, 16s, 20s;
+            animation-delay: 11.5s, 14s, 18s;
             padding: 0 20px;
             text-align: center;
             font-style: italic;
@@ -222,7 +222,6 @@
         .stars-text {
             font-size: clamp(1.5em, 5vw, 3em);
             opacity: 0;
-            animation: epicZoomInFocus 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             padding: 0 20px;
             text-align: center;
             font-style: italic;
@@ -239,6 +238,7 @@
 
         .stars-text.visible {
             display: block;
+            animation: epicZoomInFocus 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
         .stars-text.fade-out-text {
@@ -1432,8 +1432,8 @@
                 });
             }
 
-            // Phase 2: Earth animation starts at 6.5 seconds (1 second sooner)
-            if (time >= 6.5 && !earthAnimationStarted) {
+            // Phase 2: Earth animation starts at 5.5 seconds (1 second faster)
+            if (time >= 5.5 && !earthAnimationStarted) {
                 earthAnimationStarted = true;
                 earth.visible = true;
                 console.log('Earth animation started!');
@@ -1455,8 +1455,8 @@
                 }
             }
 
-            // Second Earth rise at 14.5 seconds to cover the third text (1 second hold for reading)
-            if (time >= 14.5 && !secondEarthRiseStarted && earthAnimationStarted) {
+            // Second Earth rise at 12.5 seconds to cover the third text (another 1 second faster)
+            if (time >= 12.5 && !secondEarthRiseStarted && earthAnimationStarted) {
                 secondEarthRiseStarted = true;
                 secondEarthRiseTime = 0;
                 console.log('Second Earth rise started!');
@@ -1538,14 +1538,14 @@
             }
         });
 
-        // All animations start together at 19 seconds
+        // All animations start together at 21 seconds (wait for final-text to disappear)
         setTimeout(() => {
             document.getElementById('earth-canvas').classList.add('shrink-away');
             document.getElementById('space-canvas').classList.add('zoom-in');
             document.querySelector('.stars-text').classList.add('visible');
-        }, 19000);
+        }, 21000);
 
-        // Shooting star sequence starts at 23 seconds (after stars-text animation completes)
+        // Shooting star sequence starts at 25 seconds (after stars-text animation completes)
         setTimeout(() => {
             // Fade out the stars-text and stars background
             document.querySelector('.stars-text').classList.add('fade-out-text');
@@ -1555,11 +1555,11 @@
             document.querySelector('.white-flash').classList.add('flash');
             document.querySelector('.shooting-star').classList.add('shoot');
 
-            // Show brightest text immediately as flash starts fading (500ms)
+            // Show brightest text at peak flash brightness (8% of 2s = 160ms)
             setTimeout(() => {
                 document.querySelector('.brightest-text').classList.add('visible');
-            }, 500);
-        }, 23000);
+            }, 160);
+        }, 25000);
 
         // Birthday text sequence - wait 4 seconds, fade out brightest, fade in birthday
         setTimeout(() => {
@@ -1570,7 +1570,7 @@
             setTimeout(() => {
                 document.querySelector('.birthday-text').classList.add('visible');
             }, 1000);
-        }, 27500); // 23s + 0.5s (text appears) + 4s (wait) = 27.5s
+        }, 29000); // 25s + 4s (wait) = 29s (1 second earlier)
 
         // Opening Animation Sequence - delayed to after all animations complete
         setTimeout(() => {
