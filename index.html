@@ -58,9 +58,8 @@
             transform-origin: center center;
         }
 
-        #space-canvas.zoom-out {
-            animation: zoomOutEffect 2s ease-in-out forwards;
-            animation-delay: 18s;
+        #space-canvas.zoom-in {
+            animation: starsZoomIn 4s ease-in-out forwards;
         }
 
         #earth-canvas {
@@ -74,9 +73,8 @@
             transform-origin: center center;
         }
 
-        #earth-canvas.zoom-out {
-            animation: zoomOutEffect 2s ease-in-out forwards;
-            animation-delay: 18s;
+        #earth-canvas.shrink-away {
+            animation: earthShrinkAway 1.5s ease-in forwards;
         }
 
         /* Opening Animation */
@@ -108,7 +106,7 @@
             opacity: 0;
             position: relative;
             animation: floatIn 2s ease-out forwards, gentleFloat 6s ease-in-out infinite, fadeOut 2s ease-out forwards;
-            animation-delay: 2s, 4s, 10.5s;
+            animation-delay: 2s, 4s, 9.5s;
             padding: 0 20px;
             transform-style: preserve-3d;
         }
@@ -116,7 +114,7 @@
         @keyframes floatIn {
             0% {
                 opacity: 0;
-                transform: translateY(50px) translateZ(-100px) scale(0.8);
+                transform: translateY(8vh) translateZ(-100px) scale(0.8);
                 filter: blur(8px);
             }
             40% {
@@ -134,7 +132,7 @@
         @keyframes floatInFromLower {
             0% {
                 opacity: 0;
-                transform: translateY(150px) translateZ(-100px) scale(0.8);
+                transform: translateY(25vh) translateZ(-100px) scale(0.8);
                 filter: blur(8px);
             }
             40% {
@@ -165,7 +163,7 @@
             }
             100% {
                 opacity: 0;
-                transform: translateY(50px);
+                transform: translateY(8vh);
             }
         }
 
@@ -174,7 +172,7 @@
             margin-top: 30px;
             opacity: 0;
             animation: floatIn 2s ease-out forwards, gentleFloat 7s ease-in-out infinite, fadeOut 2s ease-out forwards;
-            animation-delay: 4.5s, 6.5s, 10.5s;
+            animation-delay: 4.5s, 6.5s, 9.5s;
             padding: 0 20px;
             text-align: center;
             transform-style: preserve-3d;
@@ -183,13 +181,14 @@
         .earth-text {
             font-size: clamp(1.5em, 5vw, 3em);
             opacity: 0;
-            animation: floatInFromLower 2s ease-out forwards, gentleFloat 6s ease-in-out infinite, fadeDownOut 2s ease-out forwards;
-            animation-delay: 11s, 13s, 15s;
+            animation: floatInFromLower 2s ease-out forwards, gentleFloat 6s ease-in-out infinite, fadeDownOut 3s ease-out forwards;
+            animation-delay: 11s, 13s, 14.5s;
+            animation-fill-mode: forwards, none, forwards;
             padding: 0 20px;
             text-align: center;
             font-style: italic;
             position: fixed;
-            top: 28%;
+            top: 28vh;
             left: 0;
             right: 0;
             margin: 0 auto;
@@ -219,19 +218,104 @@
         .stars-text {
             font-size: clamp(1.5em, 5vw, 3em);
             opacity: 0;
-            animation: zoomInFocus 3s ease-out forwards, orbitalFloat 8s ease-in-out infinite;
-            animation-delay: 19s, 22s;
+            animation: epicZoomInFocus 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             padding: 0 20px;
             text-align: center;
             font-style: italic;
             position: fixed;
             top: 50%;
-            left: 0;
-            right: 0;
-            margin: 0 auto;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 90%;
             max-width: 800px;
-            z-index: 12;
+            z-index: 15;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(138, 43, 226, 0.4);
+            display: none;
+        }
+
+        .stars-text.visible {
+            display: block;
+        }
+
+        .stars-text.fade-out-text {
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        .white-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            z-index: 25;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .white-flash.flash {
+            animation: whiteFlash 2s ease-out forwards;
+        }
+
+        .shooting-star {
+            position: fixed;
+            top: 15%;
+            left: 20%;
+            width: 400px;
+            height: 6px;
+            z-index: 30;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.8),
+                        0 0 40px 15px rgba(255, 255, 255, 0.4);
+        }
+
+        .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 10px;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(200, 220, 255, 0.5) 30%,
+                rgba(255, 255, 255, 0) 100%);
+        }
+
+        .shooting-star.shoot {
+            animation: shootingStar 2.5s ease-out forwards;
+        }
+
+        .brightest-text {
+            font-size: clamp(1.5em, 5vw, 3em);
+            opacity: 0;
+            padding: 0 20px;
+            text-align: center;
+            font-style: italic;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            z-index: 15;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+
+        .brightest-text.visible {
+            opacity: 1;
         }
 
         @keyframes floatDownFromCenter {
@@ -246,7 +330,7 @@
             }
             100% {
                 opacity: 1;
-                transform: translateY(200px) scale(1);
+                transform: translateY(30vh) scale(1);
                 filter: blur(0);
             }
         }
@@ -268,49 +352,150 @@
 
         @keyframes orbitalFloat {
             0%, 100% {
-                transform: translateY(200px) rotateX(0deg) rotateY(0deg);
+                transform: translateY(30vh) rotateX(0deg) rotateY(0deg);
             }
             25% {
-                transform: translateY(188px) rotateX(2deg) rotateY(-1deg);
+                transform: translateY(28vh) rotateX(2deg) rotateY(-1deg);
             }
             50% {
-                transform: translateY(194px) rotateX(-1deg) rotateY(1deg);
+                transform: translateY(29vh) rotateX(-1deg) rotateY(1deg);
             }
             75% {
-                transform: translateY(185px) rotateX(1deg) rotateY(-2deg);
+                transform: translateY(27.5vh) rotateX(1deg) rotateY(-2deg);
             }
         }
 
-        @keyframes zoomOutEffect {
+        @keyframes earthShrinkAway {
             0% {
                 transform: scale(1);
                 opacity: 1;
             }
+            60% {
+                transform: scale(0.2);
+                opacity: 0.5;
+            }
             100% {
-                transform: scale(5);
+                transform: scale(0);
                 opacity: 0;
             }
         }
 
-        @keyframes zoomInFocus {
+        @keyframes starsZoomIn {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(2.5);
+            }
+        }
+
+        @keyframes whiteFlash {
             0% {
                 opacity: 0;
-                transform: scale(3) rotateZ(10deg);
-                filter: blur(20px);
+            }
+            8% {
+                opacity: 1;
+            }
+            25% {
+                opacity: 0.95;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            75% {
+                opacity: 0.2;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes shootingStar {
+            0% {
+                opacity: 0;
+                left: 20%;
+                top: 15%;
+                transform: translate(0, 0) scale(1);
+            }
+            3% {
+                opacity: 1;
+            }
+            12% {
+                opacity: 1;
+            }
+            40% {
+                opacity: 0.8;
+                left: 50%;
+                top: 50%;
+                transform: translate(200px, 200px) scale(1.5);
+            }
+            70% {
+                opacity: 0.4;
+                left: 75%;
+                top: 75%;
+                transform: translate(400px, 400px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                left: 95%;
+                top: 90%;
+                transform: translate(600px, 600px) scale(1);
+            }
+        }
+
+        @keyframes gentleGlow {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.95);
+                filter: blur(5px);
             }
             50% {
                 opacity: 0.5;
-                transform: scale(1.5) rotateZ(5deg);
-                filter: blur(10px);
-            }
-            80% {
-                opacity: 0.8;
-                filter: blur(3px);
+                filter: blur(2px);
             }
             100% {
                 opacity: 1;
-                transform: scale(1) rotateZ(0);
+                transform: translate(-50%, -50%) scale(1);
                 filter: blur(0);
+            }
+        }
+
+        @keyframes epicZoomInFocus {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(8) rotateZ(25deg) rotateY(45deg);
+                filter: blur(40px);
+                letter-spacing: 20px;
+            }
+            25% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(5) rotateZ(15deg) rotateY(25deg);
+                filter: blur(25px);
+                letter-spacing: 15px;
+            }
+            50% {
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(2.5) rotateZ(8deg) rotateY(10deg);
+                filter: blur(12px);
+                letter-spacing: 8px;
+            }
+            75% {
+                opacity: 0.85;
+                transform: translate(-50%, -50%) scale(1.2) rotateZ(2deg) rotateY(2deg);
+                filter: blur(4px);
+                letter-spacing: 2px;
+            }
+            90% {
+                opacity: 0.95;
+                transform: translate(-50%, -50%) scale(1.05) rotateZ(-1deg) rotateY(-1deg);
+                filter: blur(1px);
+                letter-spacing: 0.5px;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotateZ(0) rotateY(0);
+                filter: blur(0);
+                letter-spacing: 0px;
             }
         }
 
@@ -728,6 +913,10 @@
                 font-size: clamp(1.2em, 6vw, 2.2em);
             }
 
+            .stars-text {
+                font-size: clamp(1.2em, 6vw, 2.2em);
+            }
+
             #memory-game {
                 grid-template-columns: repeat(4, 60px);
                 gap: 6px;
@@ -742,8 +931,11 @@
     </style>
 </head>
 <body>
-    <!-- Space Background Canvas (stars and nebula) -->
+    <!-- Space Background Canvas (stars) -->
     <canvas id="space-canvas"></canvas>
+
+    <!-- Nebula Canvas Layer -->
+    <canvas id="nebula-canvas"></canvas>
 
     <!-- Opening Animation -->
     <div id="opening">
@@ -759,6 +951,15 @@
 
     <!-- Stars text - revealed after zoom -->
     <p class="stars-text">and out of all the stars in the night sky...</p>
+
+    <!-- White flash overlay -->
+    <div class="white-flash"></div>
+
+    <!-- Shooting star element -->
+    <div class="shooting-star"></div>
+
+    <!-- Brightest text - revealed after shooting star -->
+    <p class="brightest-text">you shine the brightest</p>
 
     <!-- Earth Canvas (on top) -->
     <canvas id="earth-canvas"></canvas>
@@ -855,12 +1056,24 @@
         earthCanvas.width = window.innerWidth;
         earthCanvas.height = window.innerHeight;
 
-        // Make sure canvas is transparent initially
+        const nebulaCanvas = document.getElementById('nebula-canvas');
+        const nebulaCtx = nebulaCanvas.getContext('2d', { alpha: true });
+        nebulaCanvas.width = window.innerWidth;
+        nebulaCanvas.height = window.innerHeight;
+
+        // Make sure canvases are transparent initially
         earthCtx.clearRect(0, 0, earthCanvas.width, earthCanvas.height);
+        nebulaCtx.clearRect(0, 0, nebulaCanvas.width, nebulaCanvas.height);
+
+        // Load NASA nebula image (Pillars of Creation)
+        const nebulaImg = new Image();
+        nebulaImg.crossOrigin = "anonymous";
+        nebulaImg.src = 'https://upload.wikimedia.org/wikipedia/commons/6/68/Pillars_of_creation_2014_HST_WFC3-UVIS_full-res_denoised.jpg';
 
         console.log('Canvas initialized:', canvas.width, 'x', canvas.height);
         console.log('Space canvas element:', canvas);
         console.log('Earth canvas element:', earthCanvas);
+        console.log('Nebula canvas element:', nebulaCanvas);
 
         let cameraX = 0;
         let cameraY = 0;
@@ -874,6 +1087,11 @@
         let secondEarthRiseStarted = false;
         let secondEarthRiseTime = 0;
 
+        // Helper function to calculate viewport-relative positions
+        function getViewportY(vh) {
+            return (canvas.height * vh) / 100;
+        }
+
         // Earth object - starts off screen below (using viewport percentages)
         const earth = {
             x: 0,
@@ -883,11 +1101,11 @@
             rotation: 0,
             image: null,
             imageLoaded: false,
-            targetY: canvas.height * 5 - 50, // First stop position (slightly higher)
+            targetY: canvas.height * 5 - getViewportY(7), // First stop position (7vh offset)
             visible: false,
             startY: canvas.height * 30,
-            firstStopY: canvas.height * 5 - 50,
-            finalY: canvas.height * 0.1 // Final higher position to cover the third text and reveal bottom text
+            firstStopY: canvas.height * 5 - getViewportY(7), // 7vh higher than 500%
+            finalY: getViewportY(10) // Final position at 10vh from top
         };
 
         // Load NASA Blue Marble Earth texture
@@ -1218,8 +1436,8 @@
                 }
             }
 
-            // Second Earth rise at 13.5 seconds to cover the third text
-            if (time >= 13.5 && !secondEarthRiseStarted && earthAnimationStarted) {
+            // Second Earth rise at 14.5 seconds to cover the third text (1 second hold for reading)
+            if (time >= 14.5 && !secondEarthRiseStarted && earthAnimationStarted) {
                 secondEarthRiseStarted = true;
                 secondEarthRiseTime = 0;
                 console.log('Second Earth rise started!');
@@ -1272,6 +1490,14 @@
             earthCanvas.width = window.innerWidth;
             earthCanvas.height = window.innerHeight;
 
+            nebulaCanvas.width = window.innerWidth;
+            nebulaCanvas.height = window.innerHeight;
+
+            // Redraw nebula if loaded
+            if (nebulaImg.complete) {
+                drawNebula();
+            }
+
             // Regenerate stars for new canvas size
             stars.length = 0;
             for (let i = 0; i < 2000; i++) {
@@ -1280,8 +1506,8 @@
 
             // Update Earth positions based on new viewport size
             earth.startY = canvas.height * 30;
-            earth.firstStopY = canvas.height * 5 - 50;
-            earth.finalY = canvas.height * 0.1;
+            earth.firstStopY = canvas.height * 5 - getViewportY(7);
+            earth.finalY = getViewportY(10);
 
             // If animation hasn't started, update starting position
             if (!earthAnimationStarted) {
@@ -1298,20 +1524,58 @@
             }
         });
 
-        // Zoom out effect at 18 seconds
-        setTimeout(() => {
-            document.getElementById('space-canvas').classList.add('zoom-out');
-            document.getElementById('earth-canvas').classList.add('zoom-out');
-        }, 18000);
+        // Draw nebula function
+        function drawNebula() {
+            if (!nebulaImg.complete) return;
 
-        // Opening Animation Sequence - delayed to after zoom completes
+            nebulaCtx.clearRect(0, 0, nebulaCanvas.width, nebulaCanvas.height);
+
+            // Calculate dimensions to cover canvas while maintaining aspect ratio
+            const scale = Math.max(nebulaCanvas.width / nebulaImg.width, nebulaCanvas.height / nebulaImg.height);
+            const width = nebulaImg.width * scale;
+            const height = nebulaImg.height * scale;
+            const x = (nebulaCanvas.width - width) / 2;
+            const y = (nebulaCanvas.height - height) / 2;
+
+            nebulaCtx.drawImage(nebulaImg, x, y, width, height);
+        }
+
+        // Start drawing nebula once loaded
+        nebulaImg.onload = () => {
+            console.log('Nebula image loaded');
+            drawNebula();
+        };
+
+        // All animations start together at 19 seconds
+        setTimeout(() => {
+            document.getElementById('earth-canvas').classList.add('shrink-away');
+            document.getElementById('space-canvas').classList.add('zoom-in');
+            document.querySelector('.stars-text').classList.add('visible');
+        }, 19000);
+
+        // Shooting star sequence starts at 23 seconds (after stars-text animation completes)
+        setTimeout(() => {
+            // Fade out the stars-text
+            document.querySelector('.stars-text').classList.add('fade-out-text');
+
+            // Trigger white flash and shooting star simultaneously
+            document.querySelector('.white-flash').classList.add('flash');
+            document.querySelector('.shooting-star').classList.add('shoot');
+
+            // Show brightest text immediately as flash starts fading (500ms)
+            setTimeout(() => {
+                document.querySelector('.brightest-text').classList.add('visible');
+            }, 500);
+        }, 23000);
+
+        // Opening Animation Sequence - delayed to after all animations complete
         setTimeout(() => {
             document.getElementById('opening').classList.add('fade-out');
             setTimeout(() => {
                 document.getElementById('opening').style.display = 'none';
                 document.getElementById('intro').classList.add('visible');
             }, 3000);
-        }, 22000);
+        }, 28000);
 
         // Quiz Data
         const quizQuestions = [
