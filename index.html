@@ -242,7 +242,12 @@
         }
 
         .stars-text.fade-out-text {
-            animation: fadeOut 1s ease-out forwards;
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        .stars-text.hidden {
+            display: none !important;
+            opacity: 0 !important;
         }
 
         .white-flash {
@@ -356,6 +361,94 @@
 
         .birthday-text.visible {
             animation: fadeIn 1s ease-out forwards;
+        }
+
+        .birthday-text.fade-out-text {
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        .final-message {
+            font-size: clamp(1.5em, 5vw, 3em);
+            opacity: 0;
+            padding: 0 20px;
+            text-align: center;
+            font-style: italic;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 900px;
+            z-index: 15;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+
+        .final-message.visible {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .final-message.fade-out-text {
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        .second-final-message {
+            font-size: clamp(1.5em, 5vw, 3em);
+            opacity: 0;
+            padding: 0 20px;
+            text-align: center;
+            font-style: italic;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 900px;
+            z-index: 15;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+
+        .second-final-message.visible {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .strikethrough {
+            position: relative;
+            display: inline-block;
+        }
+
+        .strikethrough::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-50%);
+        }
+
+        .strikethrough.strike {
+            animation: strikethroughLine 0.8s ease-out forwards;
+        }
+
+        @keyframes strikethroughLine {
+            0% {
+            }
+            100% {
+            }
+        }
+
+        .strikethrough.strike::after {
+            animation: drawLine 0.8s ease-out forwards;
+        }
+
+        @keyframes drawLine {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 100%;
+            }
         }
 
         @keyframes fadeIn {
@@ -983,7 +1076,13 @@
     <p class="brightest-text">you shine the brightest.</p>
 
     <!-- Birthday text - revealed after brightest text -->
-    <p class="birthday-text">happy birthday.</p>
+    <p class="birthday-text">happy birthday to the best <span class="strikethrough">girlfriend</span> friend ever.</p>
+
+    <!-- Final message -->
+    <p class="final-message">i'm truly lucky to have met the amazing, kind, thoughtful, beautiful, caring, funny, genuine, generous, loving, creative, wonderful person that you are.</p>
+
+    <!-- Second final message -->
+    <p class="second-final-message">i hope to spend many more birthdays with you (you're still going to outlive me though).</p>
 
     <!-- Earth Canvas (on top) -->
     <canvas id="earth-canvas"></canvas>
@@ -1548,8 +1647,14 @@
         // Shooting star sequence starts at 25 seconds (after stars-text animation completes)
         setTimeout(() => {
             // Fade out the stars-text and stars background
-            document.querySelector('.stars-text').classList.add('fade-out-text');
+            const starsText = document.querySelector('.stars-text');
+            starsText.classList.add('fade-out-text');
             document.getElementById('space-canvas').classList.add('fade-out');
+
+            // Hide stars-text completely after fade (0.5s)
+            setTimeout(() => {
+                starsText.classList.add('hidden');
+            }, 500);
 
             // Trigger white flash and shooting star simultaneously
             document.querySelector('.white-flash').classList.add('flash');
@@ -1569,8 +1674,35 @@
             // After fade out completes (1s), fade in birthday text
             setTimeout(() => {
                 document.querySelector('.birthday-text').classList.add('visible');
+
+                // Trigger strikethrough animation 1.5 seconds after text appears
+                setTimeout(() => {
+                    document.querySelector('.strikethrough').classList.add('strike');
+                }, 1500);
             }, 1000);
         }, 29000); // 25s + 4s (wait) = 29s (1 second earlier)
+
+        // Final message sequence - wait 5 seconds after strikethrough completes
+        setTimeout(() => {
+            // Fade out birthday text
+            document.querySelector('.birthday-text').classList.add('fade-out-text');
+
+            // After fade out completes (1s), fade in final message
+            setTimeout(() => {
+                document.querySelector('.final-message').classList.add('visible');
+            }, 1000);
+        }, 37300); // 30s (birthday appears) + 1.5s (before strike) + 0.8s (strike) + 5s (hold) = 37.3s
+
+        // Second final message sequence - wait 7 seconds after first final message appears
+        setTimeout(() => {
+            // Fade out first final message
+            document.querySelector('.final-message').classList.add('fade-out-text');
+
+            // After fade out completes (1s), fade in second final message
+            setTimeout(() => {
+                document.querySelector('.second-final-message').classList.add('visible');
+            }, 1000);
+        }, 45300); // 37.3s + 1s (fade in) + 7s (hold) = 45.3s
 
         // Opening Animation Sequence - delayed to after all animations complete
         setTimeout(() => {
