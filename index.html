@@ -186,7 +186,7 @@
             font-size: clamp(1.5em, 5vw, 3em);
             opacity: 0;
             animation: floatInFromLower 2s ease-out forwards, gentleFloat 6s ease-in-out infinite, fadeDownOut 3s ease-out forwards;
-            animation-delay: 10s, 12s, 15s;
+            animation-delay: 9s, 11s, 15.5s;
             animation-fill-mode: forwards, none, forwards;
             padding: 0 20px;
             text-align: center;
@@ -205,7 +205,7 @@
             font-size: clamp(1.5em, 5vw, 3em);
             opacity: 0;
             animation: floatDownFromCenter 2.5s ease-out forwards, orbitalFloat 8s ease-in-out infinite, fadeOut 1s ease-out forwards;
-            animation-delay: 13.5s, 16s, 18s;
+            animation-delay: 13.5s, 16s, 20s;
             padding: 0 20px;
             text-align: center;
             font-style: italic;
@@ -332,6 +332,39 @@
 
         .brightest-text.visible {
             opacity: 1;
+        }
+
+        .brightest-text.fade-out-text {
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        .birthday-text {
+            font-size: clamp(1.5em, 5vw, 3em);
+            opacity: 0;
+            padding: 0 20px;
+            text-align: center;
+            font-style: italic;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            z-index: 15;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+
+        .birthday-text.visible {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
         }
 
         @keyframes floatDownFromCenter {
@@ -949,6 +982,9 @@
     <!-- Brightest text - revealed after shooting star -->
     <p class="brightest-text">you shine the brightest.</p>
 
+    <!-- Birthday text - revealed after brightest text -->
+    <p class="birthday-text">happy birthday.</p>
+
     <!-- Earth Canvas (on top) -->
     <canvas id="earth-canvas"></canvas>
 
@@ -1524,6 +1560,17 @@
                 document.querySelector('.brightest-text').classList.add('visible');
             }, 500);
         }, 23000);
+
+        // Birthday text sequence - wait 4 seconds, fade out brightest, fade in birthday
+        setTimeout(() => {
+            // Fade out the brightest text
+            document.querySelector('.brightest-text').classList.add('fade-out-text');
+
+            // After fade out completes (1s), fade in birthday text
+            setTimeout(() => {
+                document.querySelector('.birthday-text').classList.add('visible');
+            }, 1000);
+        }, 27500); // 23s + 0.5s (text appears) + 4s (wait) = 27.5s
 
         // Opening Animation Sequence - delayed to after all animations complete
         setTimeout(() => {
