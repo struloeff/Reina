@@ -411,6 +411,90 @@
             animation: fadeIn 1s ease-out forwards;
         }
 
+        .second-final-message.fade-out-text {
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        .promise-message {
+            font-size: clamp(1.5em, 5vw, 3em);
+            opacity: 0;
+            padding: 0 20px;
+            text-align: center;
+            font-style: italic;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 900px;
+            z-index: 15;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+
+        .promise-message.visible {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .promise-message.fade-out-text {
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        .timer-container {
+            opacity: 0;
+            text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 900px;
+            z-index: 15;
+        }
+
+        .timer-container.visible {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .timer-text {
+            font-size: clamp(1.2em, 4vw, 2.5em);
+            font-style: italic;
+            margin-bottom: 30px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+
+        .countdown {
+            font-size: clamp(2em, 6vw, 4em);
+            font-weight: bold;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.9), 0 0 80px rgba(255, 215, 0, 0.5);
+            font-family: monospace;
+        }
+
+        .heart {
+            position: fixed;
+            font-size: 30px;
+            color: #000;
+            opacity: 0.8;
+            z-index: 10;
+            animation: floatHeart 8s ease-in forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                bottom: -50px;
+                opacity: 0.8;
+                transform: translateX(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                bottom: 110vh;
+                opacity: 0;
+                transform: translateX(var(--drift)) rotate(360deg);
+            }
+        }
+
         .strikethrough {
             position: relative;
             display: inline-block;
@@ -1084,6 +1168,15 @@
     <!-- Second final message -->
     <p class="second-final-message">i hope to spend many more birthdays with you (you're still going to outlive me though).</p>
 
+    <!-- Promise message -->
+    <p class="promise-message">also, i have a promise to make you.</p>
+
+    <!-- Timer container -->
+    <div class="timer-container">
+        <div class="timer-text">i will be your boyfriend by the time this timer ends.</div>
+        <div class="countdown" id="countdown-timer">Loading...</div>
+    </div>
+
     <!-- Earth Canvas (on top) -->
     <canvas id="earth-canvas"></canvas>
 
@@ -1704,6 +1797,117 @@
             }, 1000);
         }, 45300); // 37.3s + 1s (fade in) + 7s (hold) = 45.3s
 
+        // Promise message sequence - wait 5 seconds after second final message appears
+        setTimeout(() => {
+            // Fade out second final message
+            document.querySelector('.second-final-message').classList.add('fade-out-text');
+
+            // After fade out completes (1s), fade in promise message
+            setTimeout(() => {
+                document.querySelector('.promise-message').classList.add('visible');
+            }, 1000);
+        }, 51300); // 45.3s + 1s (fade in) + 5s (hold) = 51.3s
+
+        // Timer sequence - wait 2.5 seconds after promise message appears
+        setTimeout(() => {
+            console.log('TIMER SEQUENCE: Starting timer fade out at', performance.now());
+            // Fade out promise message
+            document.querySelector('.promise-message').classList.add('fade-out-text');
+
+            // After fade out completes (1s), fade in timer
+            setTimeout(() => {
+                console.log('TIMER SEQUENCE: Fading in timer container at', performance.now());
+                const timerContainer = document.querySelector('.timer-container');
+                console.log('TIMER SEQUENCE: Timer container element:', timerContainer);
+                timerContainer.classList.add('visible');
+                console.log('TIMER SEQUENCE: Calling startCountdown()');
+                try {
+                    startCountdown();
+                    console.log('TIMER SEQUENCE: startCountdown() completed successfully');
+                } catch (error) {
+                    console.error('TIMER SEQUENCE ERROR: Failed to call startCountdown():', error);
+                }
+                console.log('TIMER SEQUENCE: Calling startHeartAnimation()');
+                try {
+                    startHeartAnimation();
+                    console.log('TIMER SEQUENCE: startHeartAnimation() completed successfully');
+                } catch (error) {
+                    console.error('TIMER SEQUENCE ERROR: Failed to call startHeartAnimation():', error);
+                }
+            }, 1000);
+        }, 53800); // 51.3s + 1s (fade in) + 2.5s (hold) = 54.8s
+
+        // Countdown timer function
+        function startCountdown() {
+            console.log('COUNTDOWN: Function called');
+            // Midnight Feb 6, 2026 Pacific Time (PST is UTC-8)
+            // Feb 6, 2026 00:00:00 PST = Feb 6, 2026 08:00:00 UTC
+            const targetDate = new Date(Date.UTC(2026, 1, 6, 8, 0, 0)); // Month is 0-indexed, so 1 = February
+            console.log('COUNTDOWN: Target date created:', targetDate);
+            console.log('COUNTDOWN: Target date string:', targetDate.toString());
+            console.log('COUNTDOWN: Target date ISO:', targetDate.toISOString());
+
+            const countdownElement = document.getElementById('countdown-timer');
+            console.log('COUNTDOWN: Element found:', countdownElement);
+            console.log('COUNTDOWN: Element innerHTML:', countdownElement ? countdownElement.innerHTML : 'NULL');
+
+            if (!countdownElement) {
+                console.error('COUNTDOWN ERROR: Countdown element not found');
+                return;
+            }
+
+            console.log('COUNTDOWN: Target date locale string:', targetDate.toLocaleString());
+
+            function updateCountdown() {
+                const now = new Date();
+                const difference = targetDate - now;
+
+                console.log('COUNTDOWN UPDATE: Now:', now.toISOString());
+                console.log('COUNTDOWN UPDATE: Difference (ms):', difference);
+                console.log('COUNTDOWN UPDATE: Difference (days):', difference / (1000 * 60 * 60 * 24));
+
+                if (difference <= 0) {
+                    console.log('COUNTDOWN UPDATE: Time expired!');
+                    countdownElement.textContent = '0d 0h 0m 0s';
+                    return;
+                }
+
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                const timeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                console.log('COUNTDOWN UPDATE: Setting text to:', timeString);
+                countdownElement.textContent = timeString;
+                console.log('COUNTDOWN UPDATE: Element text is now:', countdownElement.textContent);
+            }
+
+            console.log('COUNTDOWN: Calling updateCountdown() for first time');
+            updateCountdown();
+            console.log('COUNTDOWN: Setting interval');
+            setInterval(updateCountdown, 1000);
+        }
+
+        // Heart animation function
+        function startHeartAnimation() {
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = '🖤';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.setProperty('--drift', (Math.random() - 0.5) * 200 + 'px');
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 8000);
+            }
+
+            // Create hearts every 500ms
+            setInterval(createHeart, 500);
+        }
+
         // Opening Animation Sequence - delayed to after all animations complete
         setTimeout(() => {
             document.getElementById('opening').classList.add('fade-out');
@@ -1918,35 +2122,6 @@
         }
 
         // Countdown Timer (30 days)
-        const unlockDate = new Date();
-        unlockDate.setDate(unlockDate.getDate() + 30);
-
-        // For testing, uncomment this line to unlock immediately:
-        // unlockDate.setSeconds(unlockDate.getSeconds() + 5);
-
-        function startCountdown() {
-            const countdownEl = document.getElementById('countdown');
-
-            function updateCountdown() {
-                const now = new Date();
-                const diff = unlockDate - now;
-
-                if (diff <= 0) {
-                    showProposal();
-                    return;
-                }
-
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-                countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            }
-
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-        }
 
         function showProposal() {
             const lockedSection = document.getElementById('locked-section');
