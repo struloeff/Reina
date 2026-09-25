@@ -1,0 +1,8 @@
+/* harness page for the words: the real fonts, tokens and line styles */
+@import '../css/base.css';
+@import '../css/lines.css';
+
+html,
+body {
+  background: #000;
+}

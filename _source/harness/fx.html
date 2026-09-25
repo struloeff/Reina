@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fx harness - meteor + hearts</title>
+<link rel="stylesheet" href="out/fx.css">
+<style>
+  /* throwaway context only: where the real words will sit, so the effects can be
+     judged against them. The real words are styled by lines.css / act2.css. */
+  .ctx {
+    position: fixed;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: min(88vw, 820px);
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink);
+    transform: translateY(-50%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .ctx--main { font-size: clamp(26px, 6.6vw, 50px); line-height: 1.12; }
+  .ctx--body { font-size: clamp(21px, 5.4vw, 36px); line-height: 1.2; max-width: 24ch; text-wrap: balance; }
+  .ctx--gold { text-shadow: var(--glow-gold); }
+  .ctx--white { text-shadow: var(--glow-white); }
+  /* like act2.css .a2-score-val: the red pen's score */
+  .ctx--score {
+    font-size: clamp(62px, 18.5vw, 104px);
+    line-height: 1;
+    color: var(--rose-ink);
+    text-shadow: 0 0 18px rgba(255, 111, 142, 0.5), 0 0 44px rgba(255, 80, 120, 0.22);
+  }
+  @media (max-height: 520px) { .ctx--score { font-size: clamp(54px, 16vh, 88px); } } /* as act2.css */
+  .ctx .aside { display: block; font-size: 0.8em; color: var(--ink-soft); margin-top: 0.3em; }
+  /* ?slip: a stand-in for act two's glass report slip, which sits over the burst */
+  .slip { display: none; }
+  .has-slip .slip {
+    display: block;
+    position: fixed;
+    left: 50%;
+    top: 45%;
+    width: min(calc(100vw - 40px), 40rem);
+    height: min(410px, 60vh);
+    transform: translate(-50%, -66px); /* the score sits in its top band, as in act2.css */
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(20, 20, 30, 0.35);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="slip"></div>
+<p class="ctx ctx--main ctx--gold" id="c-brightest" style="top:57%">you shine the brightest.</p>
+<p class="ctx ctx--body ctx--white" id="c-many" style="top:50%">i hope to spend many more birthdays with you <span class="aside">(you're still going to outlive me though).</span></p>
+<p class="ctx ctx--main ctx--white" id="c-intro" style="top:30%">just checking it's you.</p>
+<p class="ctx ctx--score" id="c-score" style="top:45%">100%</p>
+<script src="out/fx.js"></script>
+</body>
+</html>

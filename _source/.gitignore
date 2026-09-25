@@ -1,0 +1,5 @@
+node_modules/
+harness/out/
+shots/
+# throwaway probes and bundles left by the review passes
+harness/review-*

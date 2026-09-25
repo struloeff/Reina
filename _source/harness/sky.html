@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>sky - harness</title>
+<style>
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: italic;
+    font-weight: 400;
+    src: url('../node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Instrument Serif';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2') format('woff2');
+  }
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  #sky { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  /* ?words: rough stand-ins for act one's lines, only to judge composition */
+  .mock {
+    position: fixed; left: 50%; transform: translate(-50%, -50%); width: min(88vw, 24ch * 1.9);
+    margin: 0; text-align: center; color: #f7f1ea; font: italic clamp(26px, 6.6vw, 50px)/1.15 'Instrument Serif', Georgia, serif;
+    text-wrap: balance; pointer-events: none; opacity: 0;
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.32), 0 0 38px rgba(170, 190, 255, 0.2);
+  }
+  .mock.hero { font-style: normal; font-size: clamp(52px, 14vw, 104px); }
+  .mock.body { font-size: clamp(21px, 5.4vw, 36px); }
+  .mock.gold { text-shadow: 0 0 16px rgba(255, 240, 210, 0.6), 0 0 48px rgba(255, 190, 90, 0.34); }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<script src="out/sky.js"></script>
+</body>
+</html>

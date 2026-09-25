@@ -1,0 +1,166 @@
+/* The words of act one: where each line sits and how it glows at rest.
+   src/lines.js animates everything else (opacity, blur, travel, the idle float,
+   the marker strike, the flare) from the show clock, and hides a line with
+   visibility: hidden outside its cue.
+
+   Sizes read the shorter side as well as the width, so a phone turned to
+   landscape does not get 50px lines on a 390px-tall screen. */
+
+#back,
+#front {
+  --hero: clamp(52px, min(14vw, 19vh), 104px);
+  --main: clamp(26px, min(6.6vw, 9.4vh), 50px);
+  --body: clamp(21px, min(5.4vw, 7.4vh), 36px);
+}
+
+.line {
+  --anchor: -50%; /* the element's `top` is its centre; l-only hangs from its top */
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  width: min(88%, 820px);
+  margin: 0 auto;
+  font-family: var(--font-display);
+  font-size: var(--main);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: 0;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--ink);
+  font-kerning: normal;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(var(--anchor));
+  transform-origin: 50% 50%;
+  text-shadow: 0 0 9px rgba(255, 250, 240, 0.2), 0 0 28px rgba(185, 205, 255, 0.1);
+}
+
+/* ------------------------------------------------------------------ glows
+   Two layers each: a tight one in the letters' own tint that makes the strokes
+   luminous, and a wide, faint, pale one for air. Pale on purpose: a dim
+   saturated colour on black reads as smoke, not light. (src/lines.js settles
+   the flare onto exactly the gold values below.) */
+
+.line--hero {
+  font-size: var(--hero);
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: -0.012em;
+  text-shadow: 0 0 14px rgba(255, 250, 240, 0.26), 0 0 46px rgba(175, 198, 255, 0.16);
+}
+.line--sub {
+  color: rgba(247, 241, 234, 0.86);
+  text-shadow: 0 0 9px rgba(255, 250, 240, 0.16), 0 0 28px rgba(185, 205, 255, 0.08);
+}
+.line--rose {
+  color: #ffedf1;
+  text-shadow: 0 0 10px rgba(255, 196, 214, 0.42), 0 0 30px rgba(255, 150, 185, 0.15);
+}
+.line--violet {
+  color: #f4f0ff;
+  text-shadow: 0 0 10px rgba(230, 218, 255, 0.46), 0 0 32px rgba(178, 150, 255, 0.17);
+}
+.line--gold {
+  color: #fff4e3;
+  text-shadow: 0 0 10px rgba(255, 236, 204, 0.44), 0 0 30px rgba(255, 206, 142, 0.16);
+}
+.line--body {
+  font-size: var(--body);
+  line-height: 1.34;
+  width: min(88%, 13.4em);
+  text-shadow: 0 0 8px rgba(255, 250, 240, 0.17), 0 0 26px rgba(185, 205, 255, 0.07);
+}
+
+/* ------------------------------------------------------------------ places */
+
+/* "Hey Reina" and the line beneath it, as one stack centred at ~40% */
+#l-greeting {
+  top: calc(40% - var(--hero) * 0.3 - var(--main) * 0.46);
+}
+#l-crazy {
+  --anchor: 0%; /* hangs from its top, so a wrap on a tiny phone grows away from the greeting */
+  top: calc(40% + var(--hero) * 0.34 - var(--main) * 0.14);
+}
+
+/* above the horizon, whose top is at 54% */
+#l-people {
+  top: 32%;
+}
+
+/* hangs just below the settled globe (the director publishes --globe-*) */
+#l-only {
+  --anchor: 0%;
+  top: calc(var(--globe-cy) + var(--globe-r) + max(26px, var(--globe-r) * 0.2));
+}
+
+/* the brightest star (--hero-x/--hero-y, ~66%/30%) sits above this one */
+#l-brightest {
+  top: 57%;
+}
+
+/* ------------------------------------------------------------------ the strike */
+
+#l-birthday .pair {
+  white-space: nowrap; /* ~~friend~~ girlfriend always share a line */
+}
+#l-birthday .strike {
+  position: relative;
+  display: inline-block;
+}
+#l-birthday .strike-ink {
+  position: absolute;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 0 3px rgba(255, 111, 142, 0.45));
+}
+#l-birthday .strike-ink stop {
+  stop-color: var(--rose-ink); /* the red pen of act two's grading, in rose */
+}
+
+/* ------------------------------------------------------------------ word by word */
+
+.line .w {
+  display: inline-block;
+  transform-origin: 50% 70%;
+}
+
+/* ------------------------------------------------------------------ the aside */
+
+/* hangs below the main line, so the line itself stays centred before it arrives */
+#l-many .aside {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0.5em auto 0; /* auto: stays centred if the balance fallback narrows it */
+  font-size: 0.8em;
+  line-height: 1.3;
+  color: var(--ink-soft);
+  text-shadow: 0 0 10px rgba(255, 250, 240, 0.12);
+  text-wrap: balance;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ------------------------------------------------------------------ larger screens */
+
+@media (min-width: 700px) {
+  .line--body {
+    width: min(84%, 19em);
+  }
+}
+
+/* a phone on its side: a wider measure keeps l-lucky to three lines, and it sits
+   a little lower, so the brightest star's spikes (at 27% of the height) stay clear */
+@media (max-height: 520px) and (orientation: landscape) {
+  .line--body {
+    width: min(86%, 24em);
+  }
+  #l-lucky {
+    top: 55%;
+  }
+}

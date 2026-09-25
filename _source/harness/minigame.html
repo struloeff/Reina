@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>minigame - harness</title>
+<!-- ?auto (straight into a round)  ?seed=N (fixed star schedule)  ?reduced  ?nogl (DOM fallback)
+     hooks log to the console; window.__minigame is the test hook minigame-flow.cjs drives -->
+<link rel="stylesheet" href="out/minigame.css">
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="h-dom-sky" aria-hidden="true"></div>
+<div class="h-hearts" aria-hidden="true"></div>
+<p class="h-done" aria-hidden="true"></p>
+<section id="minigame" hidden></section>
+<script src="../../assets/content.js"></script>
+<script src="out/minigame.js"></script>
+</body>
+</html>

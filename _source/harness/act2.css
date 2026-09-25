@@ -1,0 +1,83 @@
+/* harness only: the real page's fonts and act two, over a still sky so the
+   glass has something faint to sit on */
+@import '../css/base.css';
+@import '../css/act2.css';
+
+.h-sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1.2px 1.2px at 23px 41px, rgba(255, 255, 255, 0.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 131px 97px, rgba(220, 230, 255, 0.4) 50%, transparent 51%),
+    radial-gradient(1px 1px at 77px 163px, rgba(255, 240, 225, 0.35) 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 181px 29px, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 59px 219px, rgba(255, 255, 255, 0.3) 50%, transparent 51%),
+    radial-gradient(1px 1px at 211px 151px, rgba(200, 215, 255, 0.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 97px 13px, rgba(255, 255, 255, 0.28) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 149px 233px, rgba(255, 236, 214, 0.45) 50%, transparent 51%),
+    radial-gradient(ellipse 120% 60% at 30% 110%, rgba(40, 46, 90, 0.35), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 90% -10%, rgba(60, 40, 90, 0.22), transparent 70%),
+    #000;
+  background-size: 241px 257px, 241px 257px, 241px 257px, 241px 257px, 241px 257px, 241px 257px, 241px 257px, 241px 257px,
+    100% 100%, 100% 100%, 100% 100%;
+}
+/* a stand-in for the show's brightest star (at --hero-x/--hero-y, intensity ~.7
+   in act two), so collisions with the words are visible here */
+.h-hero {
+  position: fixed;
+  left: 66%;
+  top: 30%;
+  z-index: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+@media (orientation: landscape) {
+  .h-hero {
+    left: 60%;
+    top: 27%;
+  }
+}
+.h-hero::before {
+  content: '';
+  position: absolute;
+  left: -2.5px;
+  top: -2.5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.8), 0 0 22px 6px rgba(190, 210, 255, 0.35);
+}
+.h-hero::after {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: -26px;
+  width: 52px;
+  height: 52px;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent) center / 52px 1px no-repeat,
+    linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.55), transparent) center / 1px 52px no-repeat;
+}
+/* ?probe: thin bright stripes, crisp where nothing covers them and smeared
+   wherever the glass is doing its job */
+.h-probe .h-sky::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(115deg, transparent 0 30px, rgba(255, 130, 170, 0.95) 30px 32px);
+}
+.h-sky::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1px 1px at 37px 71px, rgba(255, 255, 255, 0.4) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 311px 199px, rgba(255, 255, 255, 0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 173px 331px, rgba(210, 225, 255, 0.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 263px 23px, rgba(255, 245, 230, 0.3) 50%, transparent 51%);
+  background-size: 367px 383px;
+}
