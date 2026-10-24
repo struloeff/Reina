@@ -42,7 +42,8 @@ show. To remove the link, set `nameLink` in `assets/content.js` to `null`.
   `assets/content.js`. Edit, save, reload. (The "I love you sooo..." at the
   end of the letter is `"o​".repeat(2400)`: change the number for more or
   fewer o's.) The countdown's time is written with its UTC offset:
-  `2026-10-23T21:00:00-07:00` is 9pm Pacific; for 9pm Eastern use `-04:00`.
+  `2026-11-05T00:00:00-05:00` is 12am Eastern (standard time, after Nov 1);
+  Eastern is `-04:00` in summer, Pacific is `-08:00` / `-07:00`.
 
 Neither needs a rebuild.
 

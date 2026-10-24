@@ -126,11 +126,11 @@ window.REINA = {
   /* --------------------------------------------------------------------------
      THE COUNTDOWN, under the letter
      Ticks down to `until` and then rests at zero. The time is written with its
-     UTC offset: -07:00 is Pacific daylight time (9pm on Oct 23 in California).
+     UTC offset: -05:00 is Eastern standard time (12am on Nov 5 in New York).
      ------------------------------------------------------------------------ */
   countdown: {
     label: "until i see you again",
-    until: "2026-10-23T21:00:00-07:00",
+    until: "2026-11-05T00:00:00-05:00",
     units: ["days", "hours", "minutes", "seconds"]
   }
 
